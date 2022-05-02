@@ -2,7 +2,7 @@
 
 ## Script to get useful info about Toradex hardware.
 # Date: may-02-2022
-# Author: Hiago De Franco <hiago.franco@toradex.com>
+# Author: hiagofranco
 
 if [ "`id -u`" != "0" ]; then
 	echo "Please, run as root."
