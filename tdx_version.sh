@@ -16,6 +16,7 @@ software_info ()
     echo "uname-all:[`uname -a`]"
     echo "kernel:[`uname -r`]"
     echo "kernel-version:[`uname -v`]"
+    echo "BSP-version:[`uname -r | sed -r "s/.*-//g" | sed -r "s/\+.*//g" `]"
     echo "-----------------"
     echo "/etc/os-release:\n`cat /etc/os-release`"
     echo "-----------------"
