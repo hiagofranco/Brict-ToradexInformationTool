@@ -40,7 +40,7 @@ hardware_info ()
     echo "Hardware info:"
     echo "-----------------"
     echo "processor:[`uname -m`]"
-    echo "device-tree-overlays:[]"
+    echo "device-tree-overlays:[`cat /boot/overlays.txt`]"
     echo "board:[`fw_printenv board | sed -r "s/.*=//g"`]"
     echo "fdt_board:[`fw_printenv fdt_board | sed -r "s/.*=//g"`]"
     echo "soc:[`fw_printenv soc | sed -r "s/.*=//g"`]"
@@ -57,16 +57,31 @@ devices_info ()
     echo "END"
 }
 
+overlays_info(){
+    echo "Overlays Available:"
+    echo "-----------------"
+    echo "`ls -lh /boot/overlays`"
+    echo "-----------------"
+}
+
+overlays_enabled(){
+    echo "Overlays Enabled:"
+    echo "-----------------"
+    echo "`cat /boot/overlays.txt`"
+    echo "-----------------"
+}
+
 help_info ()
 {
     echo "Usage: tdx_version.sh [OPTION]"
     echo "List information about hardware and software from Toradex modules."
     echo ""
+    echo "--devices, -d     : List all devices in /dev/."
     echo "--help, -h        : Display this message."
+    echo "--no-devices, -nd : Diplay hardware and software information without listing devices."
+    echo "--overlays, -o    : Display overlay related information."
     echo "--software, -s    : Display only software information."
     echo "--hardware, -w    : Display only hardware information."
-    echo "--devices, -d     : List all devices in /dev/."
-    echo "--no-devices, -nd : Diplay hardware and software information without listing devices."
     echo ""
 }
 
@@ -87,9 +102,14 @@ case $1 in
         software_info
         hardware_info
         ;;
+    "--overlays" | "-o")
+        overlays_enabled
+	overlays_info
+	;;
     "-a" | "--all" | *)
         software_info
         hardware_info
         devices_info
+	overlays_info
         ;;
 esac
