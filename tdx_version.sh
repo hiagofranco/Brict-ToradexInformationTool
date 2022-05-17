@@ -87,7 +87,7 @@ case $1 in
         software_info
         hardware_info
         ;;
-    *)
+    "-a" | "--all" | *)
         software_info
         hardware_info
         devices_info
