@@ -27,10 +27,10 @@ software_info ()
     echo "`cat /etc/issue`"
     echo "-----------------"
     echo "uboot-version:"
-    echo "vendor:[`fw_printenv vendor`]"
-    echo "video args:[`fw_printenv vidargs`]"
-    echo "secure boot:[`fw_printenv sec_boot`]"
-    echo "boot delay:[`fw_printenv bootdelay`]"
+    echo "vendor:[`fw_printenv vendor | sed -r "s/.*=//g"`]"
+    echo "video args:[`fw_printenv vidargs | sed -r "s/.*=//g"`]"
+    echo "secure boot:[`fw_printenv sec_boot | sed -r "s/.*=//g"`]"
+    echo "boot delay:[`fw_printenv bootdelay | sed -r "s/.*=//g"`]"
     echo "-----------------"
 }
 
@@ -41,9 +41,9 @@ hardware_info ()
     echo "-----------------"
     echo "processor:[`uname -m`]"
     echo "device-tree-overlays:[]"
-    echo "board:[`fw_printenv board`]"
-    echo "fdt_board:[`fw_printenv fdt_board`]"
-    echo "soc:[`fw_printenv soc`]"
+    echo "board:[`fw_printenv board | sed -r "s/.*=//g"`]"
+    echo "fdt_board:[`fw_printenv fdt_board | sed -r "s/.*=//g"`]"
+    echo "soc:[`fw_printenv soc | sed -r "s/.*=//g"`]"
     echo "-----------------"
 }
 
