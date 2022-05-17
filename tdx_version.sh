@@ -11,16 +11,20 @@ fi
 
 software_info ()
 {
+    echo ""
     echo "Software info:"
     echo "-----------------"
     echo "uname-all:[`uname -a`]"
     echo "kernel:[`uname -r`]"
-    echo "kernel-version:[`uname -v`]"
+    echo "kernel-version:[`uname -r | sed -r "s/\+.*//g" | sed -r "s/-.*//g" `]"
+    echo "kernel-release:[`uname -v`]"
     echo "BSP-version:[`uname -r | sed -r "s/.*-//g" | sed -r "s/\+.*//g" `]"
     echo "-----------------"
-    echo "/etc/os-release:\n`cat /etc/os-release`"
+    echo "/etc/os-release:"
+    echo "`cat /etc/os-release`"
     echo "-----------------"
-    echo "/etc/issue:`cat /etc/issue`"
+    echo "/etc/issue:"
+    echo "`cat /etc/issue`"
     echo "-----------------"
     echo "uboot-version:"
     echo "vendor:[`fw_printenv vendor`]"
@@ -32,7 +36,8 @@ software_info ()
 
 hardware_info ()
 {
-    echo "\nHardware info:"
+    echo ""
+    echo "Hardware info:"
     echo "-----------------"
     echo "processor:[`uname -m`]"
     echo "device-tree-overlays:[]"
@@ -44,7 +49,10 @@ hardware_info ()
 
 devices_info ()
 {
-    echo "\nAll devices:\n`ls -lh /dev`"
+    echo ""
+    echo "All devices:"
+    echo "-----------------"
+    echo "`ls -lh /dev`"
     echo "-----------------"
     echo "END"
 }
