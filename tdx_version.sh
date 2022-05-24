@@ -104,8 +104,8 @@ case $1 in
         ;;
     "--overlays" | "-o")
         overlays_enabled
-	overlays_info
-	;;
+	    overlays_info
+	    ;;
     "-a" | "--all" | *)
         software_info
         hardware_info
