@@ -2,11 +2,19 @@
 
 ## Script to get useful info about Toradex hardware.
 # Date: may-02-2022
-# Author: hiagofranco
+# Author: hiagofranco & g-claudino
 
 if [ "`id -u`" != "0" ]; then
 	echo "Please, run as root."
 	exit
+fi
+
+distro_name="`uname -a`"
+ref_name="Torizon"
+if [[ $distro_name =~ $ref_name ]]; then
+	ref_distro=$ref_name
+else
+	ref_distro="BSP"
 fi
 
 software_info ()
@@ -40,7 +48,11 @@ hardware_info ()
     echo "Hardware info:"
     echo "-----------------"
     echo "processor:[`uname -m`]"
-    echo "device-tree-overlays:[`cat /boot/overlays.txt`]"
+    if [[ $ref_distro =~ $ref_name ]]; then
+    	echo "device-tree-overlays:[`cat /boot/ostree/torizon*/dtb/overlays.txt`]"
+    else
+	echo "device-tree-overlays:[`cat /boot/overlays.txt`]"
+    fi
     echo "board:[`fw_printenv board | sed -r "s/.*=//g"`]"
     echo "fdt_board:[`fw_printenv fdt_board | sed -r "s/.*=//g"`]"
     echo "soc:[`fw_printenv soc | sed -r "s/.*=//g"`]"
@@ -60,14 +72,22 @@ devices_info ()
 overlays_info(){
     echo "Overlays Available:"
     echo "-----------------"
-    echo "`ls -lh /boot/overlays`"
+    if [[ $ref_distro =~ $ref_name ]]; then
+        echo "`ls -lh /boot/ostree/torizon*/dtb/overlays`"
+    else
+        echo "`ls -lh /boot/overlays`"
+    fi
     echo "-----------------"
 }
 
 overlays_enabled(){
     echo "Overlays Enabled:"
     echo "-----------------"
-    echo "`cat /boot/overlays.txt`"
+    if [[ $ref_distro =~ $ref_name ]]; then
+        echo "device-tree-overlays:[`cat /boot/ostree/torizon*/dtb/overlays.txt`]"
+    else
+        echo "device-tree-overlays:[`cat /boot/overlays.txt`]"
+    fi
     echo "-----------------"
 }
 
