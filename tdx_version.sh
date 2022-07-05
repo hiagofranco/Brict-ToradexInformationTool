@@ -136,11 +136,11 @@ case $1 in
         ;;
     "--overlays" | "-o")
         overlays_enabled
-	overlays_info
-	;;
+        overlays_info
+        ;;
     "--dmesg" | "-dm")
-	dmesg_log
-	;;
+      	dmesg_log
+	      ;;
     "-a" | "--all" | *)
         software_info
         hardware_info
