@@ -97,6 +97,7 @@ help_info ()
     echo "List information about hardware and software from Toradex modules."
     echo ""
     echo "--devices, -d     : List all devices in /dev/."
+    echo "--dmesg, -dm      : Export the dmesg output in a txt file at ~."
     echo "--help, -h        : Display this message."
     echo "--no-devices, -nd : Diplay hardware and software information without listing devices."
     echo "--overlays, -o    : Display overlay related information."
@@ -104,6 +105,17 @@ help_info ()
     echo "--hardware, -w    : Display only hardware information."
     echo ""
 }
+
+
+dmesg_log ()
+{
+    if [[ $ref_distro =~ $ref_name ]]; then
+	    echo "`dmesg`" > /home/torizon/dmesg.txt
+    else
+	    echo "`dmesg`" > /home/root/dmesg.txt
+    fi
+}
+
 
 case $1 in
     "--help" | "-h")
@@ -125,6 +137,9 @@ case $1 in
     "--overlays" | "-o")
         overlays_enabled
 	overlays_info
+	;;
+    "--dmesg" | "-dm")
+	dmesg_log
 	;;
     "-a" | "--all" | *)
         software_info
