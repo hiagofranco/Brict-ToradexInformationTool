@@ -116,6 +116,12 @@ dmesg_log ()
     fi
 }
 
+modules_info (){
+    echo "Current list of kernel modules"
+    echo "-----------------"
+    echo "`lsmod`"
+    echo "-----------------"
+}
 
 case $1 in
     "--help" | "-h")
@@ -141,10 +147,14 @@ case $1 in
     "--dmesg" | "-dm")
       	dmesg_log
 	      ;;
+    "--modules" | "-m")
+        modules_info
+        ;;
     "-a" | "--all" | *)
         software_info
         hardware_info
         devices_info
 	overlays_info
+        modules_info
         ;;
 esac
