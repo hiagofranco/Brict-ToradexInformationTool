@@ -34,7 +34,7 @@ software_info ()
     echo "/etc/issue:"
     echo "`cat /etc/issue`"
     echo "-----------------"
-    echo "uboot-version:"
+    echo "U-Boot-version:[`tr -d '\0' </proc/device-tree/chosen/u-boot,version`]"
     echo "vendor:[`fw_printenv vendor | sed -r "s/.*=//g"`]"
     echo "video args:[`fw_printenv vidargs | sed -r "s/.*=//g"`]"
     echo "secure boot:[`fw_printenv sec_boot | sed -r "s/.*=//g"`]"
