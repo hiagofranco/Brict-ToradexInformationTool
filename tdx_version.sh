@@ -56,6 +56,8 @@ hardware_info ()
     echo "board:[`fw_printenv board | sed -r "s/.*=//g"`]"
     echo "fdt_board:[`fw_printenv fdt_board | sed -r "s/.*=//g"`]"
     echo "soc:[`fw_printenv soc | sed -r "s/.*=//g"`]"
+    echo "SoM model:[`tr -d '\0' </proc/device-tree/model`]"
+    echo "SoM version:[`tr -d '\0' </proc/device-tree/toradex,product-id` `tr -d '\0' </proc/device-tree/toradex,board-rev`]"
     echo "-----------------"
 }
 
