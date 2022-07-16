@@ -19,77 +19,105 @@ fi
 
 software_info ()
 {
+    uname=$(uname -a)
+    kernel=$(uname -r)
+    kernel_version=$(echo $kernel | sed -r "s/\+.*//g" | sed -r "s/-.*//g")
+    kernel_release=$(uname -v)
+    bsp_version=$(echo $kernel | sed -r "s/.*-//g" | sed -r "s/\+.*//g")
+    os_release=$(cat /etc/os-release)
+    etc_issue=$(cat /etc/issue)
+    uboot_version=$(tr -d '\0' </proc/device-tree/chosen/u-boot,version)
+    uboot_env_vendor=$(fw_printenv vendor | sed -r "s/.*=//g")
+    uboot_env_vidargs=$(fw_printenv vidargs | sed -r "s/.*=//g")
+    uboot_env_sec_boot=$(fw_printenv sec_boot | sed -r "s/.*=//g")
+    uboot_env_bootdelay=$(fw_printenv bootdelay | sed -r "s/.*=//g")
+
     echo ""
     echo "Software info:"
     echo "-----------------"
-    echo "uname-all:[$(uname -a)]"
-    echo "kernel:[$(uname -r)]"
-    echo "kernel-version:[$(uname -r | sed -r "s/\+.*//g" | sed -r "s/-.*//g" )]"
-    echo "kernel-release:[$(uname -v)]"
-    echo "BSP-version:[$(uname -r | sed -r "s/.*-//g" | sed -r "s/\+.*//g" )]"
+    echo "uname-all:[$uname]"
+    echo "kernel:[$kernel]"
+    echo "kernel-version:[$kernel_version]"
+    echo "kernel-release:[$kernel_release]"
+    echo "BSP-version:[$bsp_version]"
     echo "-----------------"
     echo "/etc/os-release:"
-    echo "$(cat /etc/os-release)"
+    echo "$os_release"
     echo "-----------------"
     echo "/etc/issue:"
-    echo "$(cat /etc/issue)"
+    echo "$etc_issue"
     echo "-----------------"
-    echo "U-Boot-version:[$(tr -d '\0' </proc/device-tree/chosen/u-boot,version)]"
-    echo "vendor:[$(fw_printenv vendor | sed -r "s/.*=//g")]"
-    echo "video args:[$(fw_printenv vidargs | sed -r "s/.*=//g")]"
-    echo "secure boot:[$(fw_printenv sec_boot | sed -r "s/.*=//g")]"
-    echo "boot delay:[$(fw_printenv bootdelay | sed -r "s/.*=//g")]"
+    echo "U-Boot-version:[$uboot_version]"
+    echo "vendor:[$uboot_env_vendor]"
+    echo "video args:[$uboot_env_vidargs]"
+    echo "secure boot:[$uboot_env_sec_boot]"
+    echo "boot delay:[$uboot_env_bootdelay]"
     echo "-----------------"
 }
 
 hardware_info ()
 {
+    processor=$(uname -m)
+    uboot_env_board=$(fw_printenv board | sed -r "s/.*=//g")
+    uboot_env_fdt_board=$(fw_printenv fdt_board | sed -r "s/.*=//g")
+    uboot_env_soc=$(fw_printenv soc | sed -r "s/.*=//g")
+    som_model=$(tr -d '\0' </proc/device-tree/model)
+    som_pid4=$(tr -d '\0' </proc/device-tree/toradex,product-id)
+    som_pid8=$(tr -d '\0' </proc/device-tree/toradex,board-rev)
+    if [[ $ref_distro =~ $ref_name ]]; then
+        dto=$(cat /boot/ostree/torizon*/dtb/overlays.txt)
+    else
+        dto=$(cat /boot/overlays.txt)
+    fi
+
     echo ""
     echo "Hardware info:"
     echo "-----------------"
-    echo "processor:[$(uname -m)]"
-    if [[ $ref_distro =~ $ref_name ]]; then
-        echo "device-tree-overlays:[$(cat /boot/ostree/torizon*/dtb/overlays.txt)]"
-    else
-        echo "device-tree-overlays:[$(cat /boot/overlays.txt)]"
-    fi
-    echo "board:[$(fw_printenv board | sed -r "s/.*=//g")]"
-    echo "fdt_board:[$(fw_printenv fdt_board | sed -r "s/.*=//g")]"
-    echo "soc:[$(fw_printenv soc | sed -r "s/.*=//g")]"
-    echo "SoM model:[$(tr -d '\0' </proc/device-tree/model)]"
-    echo "SoM version:[$(tr -d '\0' </proc/device-tree/toradex,product-id) $(tr -d '\0' </proc/device-tree/toradex,board-rev)]"
+    echo "processor:[$processor]"
+    echo "device-tree-overlays:[$dto]"
+    echo "board:[$uboot_env_board]"
+    echo "fdt_board:[$uboot_env_fdt_board]"
+    echo "soc:[$uboot_env_soc]"
+    echo "SoM model:[$som_model]"
+    echo "SoM version:[$som_pid4 $som_pid8]"
     echo "-----------------"
 }
 
 devices_info ()
 {
+    devices=$(ls -lh /dev)
+
     echo ""
     echo "All devices:"
     echo "-----------------"
-    echo "$(ls -lh /dev)"
+    echo "$devices"
     echo "-----------------"
     echo "END"
 }
 
 overlays_info(){
+    if [[ $ref_distro =~ $ref_name ]]; then
+        dto_available=$(ls -lh /boot/ostree/torizon*/dtb/overlays)
+    else
+        dto_available=$(ls -lh /boot/overlays)
+    fi
+
     echo "Overlays Available:"
     echo "-----------------"
-    if [[ $ref_distro =~ $ref_name ]]; then
-        echo "$(ls -lh /boot/ostree/torizon*/dtb/overlays)"
-    else
-        echo "$(ls -lh /boot/overlays)"
-    fi
+    echo "$dto_available"
     echo "-----------------"
 }
 
 overlays_enabled(){
+    if [[ $ref_distro =~ $ref_name ]]; then
+        dto=$(cat /boot/ostree/torizon*/dtb/overlays.txt)
+    else
+        dto=$(cat /boot/overlays.txt)
+    fi
+
     echo "Overlays Enabled:"
     echo "-----------------"
-    if [[ $ref_distro =~ $ref_name ]]; then
-        echo "device-tree-overlays:[$(cat /boot/ostree/torizon*/dtb/overlays.txt)]"
-    else
-        echo "device-tree-overlays:[$(cat /boot/overlays.txt)]"
-    fi
+    echo "device-tree-overlays:[$dto]"
     echo "-----------------"
 }
 
@@ -119,9 +147,11 @@ dmesg_log ()
 }
 
 modules_info (){
+    lsmod=$(lsmod)
+
     echo "Current list of kernel modules"
     echo "-----------------"
-    echo "$(lsmod)"
+    echo "$lsmod"
     echo "-----------------"
 }
 
