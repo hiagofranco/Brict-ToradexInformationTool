@@ -35,7 +35,7 @@ software_info ()
     fi
 
     echo ""
-    echo "Software info:"
+    echo "Software info"
     echo "-----------------"
     echo "U-Boot-version:[$uboot_version]"
     echo "U-Boot vendor:[$uboot_env_vendor]"
@@ -60,7 +60,7 @@ hardware_info ()
     uboot_env_soc=$(fw_printenv soc | sed -r "s/.*=//g")
 
     echo ""
-    echo "Hardware info:"
+    echo "Hardware info"
     echo "-----------------"
     echo "SoM model:[$som_model]"
     echo "SoM version:[$som_pid4 $som_pid8]"
@@ -71,7 +71,8 @@ hardware_info ()
     echo "-----------------"
 }
 
-overlays_info(){
+overlays_info()
+{
     if [[ $ref_distro =~ $ref_name ]]; then
         stateroot=$(cat /proc/cmdline | awk -F "ostree=" '{print $2}' | awk '{print $1}' | awk -F "/" '{print $5}')
         dto_enabled=$(cat /boot/ostree/torizon-$stateroot/dtb/overlays.txt)
@@ -82,7 +83,7 @@ overlays_info(){
     fi
 
     echo ""
-    echo "Device Tree Overlays:"
+    echo "Device Tree Overlays"
     echo "-----------------"
     echo "Device tree overlays enabled:[$dto_enabled]"
     echo "Device tree overlays available:[$dto_available]"
@@ -94,11 +95,30 @@ devices_info ()
     devices=$(ls -lh /dev)
 
     echo ""
-    echo "All devices:"
+    echo "Devices"
     echo "-----------------"
-    echo "$devices"
+    echo "All devices available:[$devices]"
     echo "-----------------"
-    echo "END"
+}
+
+modules_info ()
+{
+    lsmod=$(lsmod)
+
+    echo ""
+    echo "Kernel modules"
+    echo "-----------------"
+    echo "Kernel modules loaded:[$lsmod]"
+    echo "-----------------"
+}
+
+dmesg_log ()
+{
+    if [[ $ref_distro =~ $ref_name ]]; then
+        echo "$(dmesg)" > /home/torizon/dmesg.txt
+    else
+        echo "$(dmesg)" > /home/root/dmesg.txt
+    fi
 }
 
 help_info ()
@@ -114,25 +134,6 @@ help_info ()
     echo "--software, -s    : Display only software information."
     echo "--hardware, -w    : Display only hardware information."
     echo ""
-}
-
-
-dmesg_log ()
-{
-    if [[ $ref_distro =~ $ref_name ]]; then
-        echo "$(dmesg)" > /home/torizon/dmesg.txt
-    else
-        echo "$(dmesg)" > /home/root/dmesg.txt
-    fi
-}
-
-modules_info (){
-    lsmod=$(lsmod)
-
-    echo "Current list of kernel modules"
-    echo "-----------------"
-    echo "$lsmod"
-    echo "-----------------"
 }
 
 case $1 in
