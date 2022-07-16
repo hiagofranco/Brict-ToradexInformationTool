@@ -71,22 +71,34 @@ hardware_info ()
     echo "-----------------"
 }
 
-overlays_info()
+device_tree_info()
 {
+    dt_compatible=$(tr -d '\0' </proc/device-tree/compatible)
+    dt_used=$(fw_printenv fdtfile | sed -r "s/.*=//g")
     if [[ $ref_distro =~ $ref_name ]]; then
         stateroot=$(cat /proc/cmdline | awk -F "ostree=" '{print $2}' | awk '{print $1}' | awk -F "/" '{print $5}')
+        dt_available=$(ls /boot/ostree/torizon-$stateroot/dtb/ | grep dtb)
         dto_enabled=$(cat /boot/ostree/torizon-$stateroot/dtb/overlays.txt)
         dto_available=$(ls /boot/ostree/torizon-$stateroot/dtb/overlays)
     else
+        dt_available=$(ls /boot/ | grep dtb)
         dto_enabled=$(cat /boot/overlays.txt)
         dto_available=$(ls /boot/overlays)
     fi
 
     echo ""
-    echo "Device Tree Overlays"
+    echo "Device tree"
     echo "-----------------"
-    echo "Device tree overlays enabled:[$dto_enabled]"
-    echo "Device tree overlays available:[$dto_available]"
+    echo "Device tree enabled:[$dt_used]"
+    echo "Compatible string:[$dt_compatible]"
+    echo "Device trees available:[$dt_available]"
+    echo "-----------------"
+
+    echo ""
+    echo "-----------------"
+    echo "Device tree overlays"
+    echo "Overlays enabled:[$dto_enabled]"
+    echo "Overlays available:[$dto_available]"
     echo "-----------------"
 }
 
@@ -127,13 +139,13 @@ help_info ()
     echo "Usage: tdx_version.sh [OPTION]"
     echo "List information about hardware and software from Toradex modules."
     echo ""
-    echo "--devices, -d     : List all devices in /dev/."
-    echo "--dmesg, -dm      : Export the dmesg output in a txt file at ~."
-    echo "--help, -h        : Display this message."
-    echo "--no-devices, -nd : Diplay hardware and software information without listing devices."
-    echo "--overlays, -o    : Display overlay related information."
-    echo "--software, -s    : Display only software information."
-    echo "--hardware, -w    : Display only hardware information."
+    echo "--devices, -d      : List all devices in /dev/."
+    echo "--device-tree, -dt : Display device tree and overlays related information."
+    echo "--dmesg, -dm       : Export the dmesg output in a txt file at ~."
+    echo "--hardware, -w     : Display only hardware information."
+    echo "--help, -h         : Display this message."
+    echo "--no-devices, -nd  : Diplay hardware and software information without listing devices."
+    echo "--software, -s     : Display only software information."
     echo ""
 }
 
@@ -147,15 +159,15 @@ case $1 in
     "--hardware" | "-w")
         hardware_info
         ;;
+    "--device-tree" | "-dt")
+        device_tree_info
+        ;;
     "--devices" | "-d")
         devices_info
         ;;
     "--no-devices" | "-nd")
         software_info
         hardware_info
-        ;;
-    "--overlays" | "-o")
-        overlays_info
         ;;
     "--dmesg" | "-dm")
         dmesg_log
@@ -166,7 +178,7 @@ case $1 in
     "-a" | "--all" | *)
         software_info
         hardware_info
-        overlays_info
+        device_tree_info
         devices_info
         modules_info
         ;;
