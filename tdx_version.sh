@@ -5,16 +5,16 @@
 # Author: hiagofranco & g-claudino
 
 if [ "$(id -u)" != "0" ]; then
-	echo "Please, run as root."
-	exit
+    echo "Please, run as root."
+    exit
 fi
 
 distro_name=$(uname -a)
 ref_name="Torizon"
 if [[ $distro_name =~ $ref_name ]]; then
-	ref_distro=$ref_name
+    ref_distro=$ref_name
 else
-	ref_distro="BSP"
+    ref_distro="BSP"
 fi
 
 software_info ()
@@ -140,9 +140,9 @@ help_info ()
 dmesg_log ()
 {
     if [[ $ref_distro =~ $ref_name ]]; then
-	    echo "$(dmesg)" > /home/torizon/dmesg.txt
+        echo "$(dmesg)" > /home/torizon/dmesg.txt
     else
-	    echo "$(dmesg)" > /home/root/dmesg.txt
+        echo "$(dmesg)" > /home/root/dmesg.txt
     fi
 }
 
@@ -177,8 +177,8 @@ case $1 in
         overlays_info
         ;;
     "--dmesg" | "-dm")
-      	dmesg_log
-	      ;;
+        dmesg_log
+          ;;
     "--modules" | "-m")
         modules_info
         ;;
@@ -186,7 +186,7 @@ case $1 in
         software_info
         hardware_info
         devices_info
-	overlays_info
+        overlays_info
         modules_info
         ;;
 esac
