@@ -122,6 +122,16 @@ dmesg_log ()
     chown $loggeduser:$loggeduser /home/$loggeduser/dmesg.txt
 }
 
+distro_detect ()
+{
+    # For (arguably) any modern distro, rely on /etc/os-release
+    if [[ -f /etc/os-release ]]; then
+        export "DISTRO_$(cat /etc/os-release | grep ^NAME)"
+    else
+        DISTRO_NAME="BSP"
+    fi
+}
+
 help_info ()
 {
     echo "Usage: tdx_version.sh [OPTION]"
@@ -144,12 +154,7 @@ if [ "$(id -u)" != "0" ]; then
     exit
 fi
 
-distro_name=$(uname -a)
-if [[ $distro_name =~ "Torizon" ]]; then
-    ref_distro="Torizon"
-else
-    ref_distro="BSP"
-fi
+distro_detect
 
 case $1 in
     "--help" | "-h")
