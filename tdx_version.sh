@@ -33,6 +33,7 @@ software_info ()
         distro_name=$(cat /etc/issue)
         distro_version=""
     fi
+    hostname=$(cat /etc/hostname)
 
     echo ""
     echo "Software info"
@@ -46,6 +47,7 @@ software_info ()
     echo "Kernel command line:[$kernel_cmdline]"
     echo "Distro name:[$distro_name]"
     echo "Distro version:[$distro_version]"
+    echo "Hostname:[$hostname]"
     echo "-----------------"
 }
 
@@ -54,6 +56,7 @@ hardware_info ()
     som_model=$(tr -d '\0' </proc/device-tree/model)
     som_pid4=$(tr -d '\0' </proc/device-tree/toradex,product-id)
     som_pid8=$(tr -d '\0' </proc/device-tree/toradex,board-rev)
+    serial=$(tr -d '\0' </proc/device-tree/serial-number)
     processor=$(uname -m)
     uboot_env_board=$(fw_printenv board | sed -r "s/.*=//g")
     uboot_env_fdt_board=$(fw_printenv fdt_board | sed -r "s/.*=//g")
@@ -64,6 +67,7 @@ hardware_info ()
     echo "-----------------"
     echo "SoM model:[$som_model]"
     echo "SoM version:[$som_pid4 $som_pid8]"
+    echo "SoM serial number:[$serial]"
     echo "Processor arch:[$processor]"
     echo "U-Boot board:[$uboot_env_board]"
     echo "U-Boot fdt_board:[$uboot_env_fdt_board]"
