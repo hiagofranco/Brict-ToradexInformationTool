@@ -19,39 +19,33 @@ fi
 
 software_info ()
 {
-    uname=$(uname -a)
-    kernel=$(uname -r)
-    kernel_version=$(echo $kernel | sed -r "s/\+.*//g" | sed -r "s/-.*//g")
-    kernel_release=$(uname -v)
-    bsp_version=$(echo $kernel | sed -r "s/.*-//g" | sed -r "s/\+.*//g")
-    os_release=$(cat /etc/os-release)
-    etc_issue=$(cat /etc/issue)
     uboot_version=$(tr -d '\0' </proc/device-tree/chosen/u-boot,version)
     uboot_env_vendor=$(fw_printenv vendor | sed -r "s/.*=//g")
     uboot_env_vidargs=$(fw_printenv vidargs | sed -r "s/.*=//g")
     uboot_env_sec_boot=$(fw_printenv sec_boot | sed -r "s/.*=//g")
     uboot_env_bootdelay=$(fw_printenv bootdelay | sed -r "s/.*=//g")
+    kernel_version=$(uname -rv)
+    kernel_cmdline=$(cat /proc/cmdline)
+    if [[ -f /etc/os-release ]]; then
+        distro_name=$(cat /etc/os-release | grep ^NAME)
+        distro_version=$(cat /etc/os-release | grep VERSION_ID)
+    else
+        distro_name=$(cat /etc/issue)
+        distro_version=""
+    fi
 
     echo ""
     echo "Software info:"
     echo "-----------------"
-    echo "uname-all:[$uname]"
-    echo "kernel:[$kernel]"
-    echo "kernel-version:[$kernel_version]"
-    echo "kernel-release:[$kernel_release]"
-    echo "BSP-version:[$bsp_version]"
-    echo "-----------------"
-    echo "/etc/os-release:"
-    echo "$os_release"
-    echo "-----------------"
-    echo "/etc/issue:"
-    echo "$etc_issue"
-    echo "-----------------"
     echo "U-Boot-version:[$uboot_version]"
-    echo "vendor:[$uboot_env_vendor]"
-    echo "video args:[$uboot_env_vidargs]"
-    echo "secure boot:[$uboot_env_sec_boot]"
-    echo "boot delay:[$uboot_env_bootdelay]"
+    echo "U-Boot vendor:[$uboot_env_vendor]"
+    echo "U-Boot video args:[$uboot_env_vidargs]"
+    echo "U-Boot secure boot:[$uboot_env_sec_boot]"
+    echo "U-Boot boot delay:[$uboot_env_bootdelay]"
+    echo "Kernel version:[$kernel_version]"
+    echo "Kernel command line:[$kernel_cmdline]"
+    echo "Distro name:[$distro_name]"
+    echo "Distro version:[$distro_version]"
     echo "-----------------"
 }
 
