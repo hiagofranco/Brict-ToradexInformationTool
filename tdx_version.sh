@@ -138,7 +138,7 @@ distro_detect ()
     if [[ -f /etc/os-release ]]; then
         export "DISTRO_$(cat /etc/os-release | grep ^NAME)"
     else
-        DISTRO_NAME="BSP"
+        DISTRO_NAME="Unknown"
     fi
 }
 
