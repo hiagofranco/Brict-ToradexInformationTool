@@ -117,12 +117,9 @@ modules_info ()
 
 dmesg_log ()
 {
-    if [[ $ref_distro =~ $ref_name ]]; then
-        echo "$(dmesg)" > /home/torizon/dmesg.txt
-        chown torizon:torizon /home/torizon/dmesg.txt
-    else
-        echo "$(dmesg)" > /home/root/dmesg.txt
-    fi
+    loggeduser=${SUDO_USER:-$(logname)}
+    echo "$(dmesg)" > /home/$loggeduser/dmesg.txt
+    chown $loggeduser:$loggeduser /home/$loggeduser/dmesg.txt
 }
 
 help_info ()
