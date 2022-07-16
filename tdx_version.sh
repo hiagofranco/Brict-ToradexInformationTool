@@ -57,29 +57,41 @@ software_info ()
 
 hardware_info ()
 {
+    som_model=$(tr -d '\0' </proc/device-tree/model)
+    som_pid4=$(tr -d '\0' </proc/device-tree/toradex,product-id)
+    som_pid8=$(tr -d '\0' </proc/device-tree/toradex,board-rev)
     processor=$(uname -m)
     uboot_env_board=$(fw_printenv board | sed -r "s/.*=//g")
     uboot_env_fdt_board=$(fw_printenv fdt_board | sed -r "s/.*=//g")
     uboot_env_soc=$(fw_printenv soc | sed -r "s/.*=//g")
-    som_model=$(tr -d '\0' </proc/device-tree/model)
-    som_pid4=$(tr -d '\0' </proc/device-tree/toradex,product-id)
-    som_pid8=$(tr -d '\0' </proc/device-tree/toradex,board-rev)
-    if [[ $ref_distro =~ $ref_name ]]; then
-        dto=$(cat /boot/ostree/torizon*/dtb/overlays.txt)
-    else
-        dto=$(cat /boot/overlays.txt)
-    fi
 
     echo ""
     echo "Hardware info:"
     echo "-----------------"
-    echo "processor:[$processor]"
-    echo "device-tree-overlays:[$dto]"
-    echo "board:[$uboot_env_board]"
-    echo "fdt_board:[$uboot_env_fdt_board]"
-    echo "soc:[$uboot_env_soc]"
     echo "SoM model:[$som_model]"
     echo "SoM version:[$som_pid4 $som_pid8]"
+    echo "Processor arch:[$processor]"
+    echo "U-Boot board:[$uboot_env_board]"
+    echo "U-Boot fdt_board:[$uboot_env_fdt_board]"
+    echo "U-Boot soc:[$uboot_env_soc]"
+    echo "-----------------"
+}
+
+overlays_info(){
+    if [[ $ref_distro =~ $ref_name ]]; then
+        stateroot=$(cat /proc/cmdline | awk -F "ostree=" '{print $2}' | awk '{print $1}' | awk -F "/" '{print $5}')
+        dto_enabled=$(cat /boot/ostree/torizon-$stateroot/dtb/overlays.txt)
+        dto_available=$(ls /boot/ostree/torizon-$stateroot/dtb/overlays)
+    else
+        dto_enabled=$(cat /boot/overlays.txt)
+        dto_available=$(ls /boot/overlays)
+    fi
+
+    echo ""
+    echo "Device Tree Overlays:"
+    echo "-----------------"
+    echo "Device tree overlays enabled:[$dto_enabled]"
+    echo "Device tree overlays available:[$dto_available]"
     echo "-----------------"
 }
 
@@ -93,32 +105,6 @@ devices_info ()
     echo "$devices"
     echo "-----------------"
     echo "END"
-}
-
-overlays_info(){
-    if [[ $ref_distro =~ $ref_name ]]; then
-        dto_available=$(ls -lh /boot/ostree/torizon*/dtb/overlays)
-    else
-        dto_available=$(ls -lh /boot/overlays)
-    fi
-
-    echo "Overlays Available:"
-    echo "-----------------"
-    echo "$dto_available"
-    echo "-----------------"
-}
-
-overlays_enabled(){
-    if [[ $ref_distro =~ $ref_name ]]; then
-        dto=$(cat /boot/ostree/torizon*/dtb/overlays.txt)
-    else
-        dto=$(cat /boot/overlays.txt)
-    fi
-
-    echo "Overlays Enabled:"
-    echo "-----------------"
-    echo "device-tree-overlays:[$dto]"
-    echo "-----------------"
 }
 
 help_info ()
@@ -173,7 +159,6 @@ case $1 in
         hardware_info
         ;;
     "--overlays" | "-o")
-        overlays_enabled
         overlays_info
         ;;
     "--dmesg" | "-dm")
@@ -185,8 +170,8 @@ case $1 in
     "-a" | "--all" | *)
         software_info
         hardware_info
-        devices_info
         overlays_info
+        devices_info
         modules_info
         ;;
 esac
