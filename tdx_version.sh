@@ -4,19 +4,6 @@
 # Date: may-02-2022
 # Author: hiagofranco & g-claudino
 
-if [ "$(id -u)" != "0" ]; then
-    echo "Please, run as root."
-    exit
-fi
-
-distro_name=$(uname -a)
-ref_name="Torizon"
-if [[ $distro_name =~ $ref_name ]]; then
-    ref_distro=$ref_name
-else
-    ref_distro="BSP"
-fi
-
 software_info ()
 {
     uboot_version=$(tr -d '\0' </proc/device-tree/chosen/u-boot,version)
@@ -152,6 +139,21 @@ help_info ()
     echo "--software, -s     : Display only software information."
     echo ""
 }
+
+# Main
+
+if [ "$(id -u)" != "0" ]; then
+    echo "Please, run as root."
+    exit
+fi
+
+distro_name=$(uname -a)
+ref_name="Torizon"
+if [[ $distro_name =~ $ref_name ]]; then
+    ref_distro=$ref_name
+else
+    ref_distro="BSP"
+fi
 
 case $1 in
     "--help" | "-h")
