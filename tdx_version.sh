@@ -69,12 +69,22 @@ device_tree_info()
     if [[ -d /boot/ostree ]]; then
         stateroot=$(cat /proc/cmdline | awk -F "ostree=" '{print $2}' | awk '{print $1}' | awk -F "/" '{print $5}')
         dt_available=$(ls /boot/ostree/torizon-$stateroot/dtb/ | grep dtb)
-        dto_enabled=$(cat /boot/ostree/torizon-$stateroot/dtb/overlays.txt)
-        dto_available=$(ls /boot/ostree/torizon-$stateroot/dtb/overlays)
+        if [[ -f /boot/ostree/torizon-$stateroot/dtb/overlays.txt ]]; then
+            dto_enabled=$(cat /boot/ostree/torizon-$stateroot/dtb/overlays.txt)
+            dto_available=$(ls /boot/ostree/torizon-$stateroot/dtb/overlays)
+        else
+            dto_enabled=""
+            dto_available=""
+        fi
     else
         dt_available=$(ls /boot/ | grep dtb)
-        dto_enabled=$(cat /boot/overlays.txt)
-        dto_available=$(ls /boot/overlays)
+        if [[ -f /boot/overlays.txt ]]; then
+            dto_enabled=$(cat /boot/overlays.txt)
+            dto_available=$(ls /boot/overlays)
+        else
+            dto_enabled=""
+            dto_available=""
+        fi
     fi
 
     echo ""
