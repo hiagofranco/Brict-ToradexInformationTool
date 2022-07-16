@@ -66,7 +66,7 @@ device_tree_info()
 {
     dt_compatible=$(tr -d '\0' </proc/device-tree/compatible)
     dt_used=$(fw_printenv fdtfile | sed -r "s/.*=//g")
-    if [[ $ref_distro =~ $ref_name ]]; then
+    if [[ -d /boot/ostree ]]; then
         stateroot=$(cat /proc/cmdline | awk -F "ostree=" '{print $2}' | awk '{print $1}' | awk -F "/" '{print $5}')
         dt_available=$(ls /boot/ostree/torizon-$stateroot/dtb/ | grep dtb)
         dto_enabled=$(cat /boot/ostree/torizon-$stateroot/dtb/overlays.txt)
@@ -148,9 +148,8 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 distro_name=$(uname -a)
-ref_name="Torizon"
-if [[ $distro_name =~ $ref_name ]]; then
-    ref_distro=$ref_name
+if [[ $distro_name =~ "Torizon" ]]; then
+    ref_distro="Torizon"
 else
     ref_distro="BSP"
 fi
