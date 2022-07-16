@@ -96,8 +96,8 @@ device_tree_info()
     echo "-----------------"
 
     echo ""
-    echo "-----------------"
     echo "Device tree overlays"
+    echo "-----------------"
     echo "Overlays enabled:[$dto_enabled]"
     echo "Overlays available:[$dto_available]"
     echo "-----------------"
