@@ -13,9 +13,9 @@ software_info ()
     uboot_env_bootdelay=$(fw_printenv bootdelay | sed -r "s/.*=//g")
     kernel_version=$(uname -rv)
     kernel_cmdline=$(cat /proc/cmdline)
-    if [[ -f /etc/os-release ]]; then
-        distro_name=$(cat /etc/os-release | grep ^NAME)
-        distro_version=$(cat /etc/os-release | grep VERSION_ID)
+    if [ -f /etc/os-release ]; then
+        distro_name=$(grep ^NAME /etc/os-release)
+        distro_version=$(grep VERSION_ID /etc/os-release)
     else
         distro_name=$(cat /etc/issue)
         distro_version=""
@@ -66,19 +66,21 @@ device_tree_info()
 {
     dt_compatible=$(tr -d '\0' </proc/device-tree/compatible)
     dt_used=$(fw_printenv fdtfile | sed -r "s/.*=//g")
-    if [[ -d /boot/ostree ]]; then
-        stateroot=$(cat /proc/cmdline | awk -F "ostree=" '{print $2}' | awk '{print $1}' | awk -F "/" '{print $5}')
-        dt_available=$(ls /boot/ostree/torizon-$stateroot/dtb/ | grep dtb)
-        if [[ -f /boot/ostree/torizon-$stateroot/dtb/overlays.txt ]]; then
-            dto_enabled=$(cat /boot/ostree/torizon-$stateroot/dtb/overlays.txt)
-            dto_available=$(ls /boot/ostree/torizon-$stateroot/dtb/overlays)
+    if [ -d /boot/ostree ]; then
+        stateroot=$(awk -F "ostree=" '{print $2}' /proc/cmdline | awk '{print $1}' | awk -F "/" '{print $5}')
+        # shellcheck disable=SC2010
+        dt_available=$(ls /boot/ostree/torizon-"$stateroot"/dtb/ | grep dtb)
+        if [ -f /boot/ostree/torizon-"$stateroot"/dtb/overlays.txt ]; then
+            dto_enabled=$(cat /boot/ostree/torizon-"$stateroot"/dtb/overlays.txt)
+            dto_available=$(ls /boot/ostree/torizon-"$stateroot"/dtb/overlays)
         else
             dto_enabled=""
             dto_available=""
         fi
     else
+        # shellcheck disable=SC2010
         dt_available=$(ls /boot/ | grep dtb)
-        if [[ -f /boot/overlays.txt ]]; then
+        if [ -f /boot/overlays.txt ]; then
             dto_enabled=$(cat /boot/overlays.txt)
             dto_available=$(ls /boot/overlays)
         else
@@ -128,17 +130,17 @@ modules_info ()
 dmesg_log ()
 {
     loggeduser=${SUDO_USER:-$(logname)}
-    echo "$(dmesg)" > /home/$loggeduser/dmesg.txt
-    chown $loggeduser:$loggeduser /home/$loggeduser/dmesg.txt
+    dmesg > /home/"$loggeduser"/dmesg.txt
+    chown "$loggeduser":"$loggeduser" /home/"$loggeduser"/dmesg.txt
 }
 
 distro_detect ()
 {
     # For (arguably) any modern distro, rely on /etc/os-release
-    if [[ -f /etc/os-release ]]; then
-        export "DISTRO_$(cat /etc/os-release | grep ^NAME)"
+    if [ -f /etc/os-release ]; then
+        export "DISTRO_$(grep ^NAME /etc/os-release)"
     else
-        DISTRO_NAME="Unknown"
+        export DISTRO_NAME="Unknown"
     fi
 }
 
