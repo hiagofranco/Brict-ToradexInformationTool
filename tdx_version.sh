@@ -165,6 +165,14 @@ dmesg_log ()
     chown "$loggeduser":"$loggeduser" /home/"$loggeduser"/dmesg.txt
 }
 
+check_root_user ()
+{
+    if [ "$(id -u)" != "0" ]; then
+        echo "Please, run as root."
+        exit 13
+    fi
+}
+
 distro_detect ()
 {
     # For (arguably) any modern distro, rely on /etc/os-release
@@ -192,11 +200,7 @@ help_info ()
 
 #### Main ####
 
-if [ "$(id -u)" != "0" ]; then
-    echo "Please, run as root."
-    exit
-fi
-
+check_root_user
 distro_detect
 
 case $1 in
