@@ -72,16 +72,20 @@ software_summary ()
 
 hardware_info ()
 {
-    som_model=$(tr -d '\0' </proc/device-tree/model)
-    som_pid4=$(tr -d '\0' </proc/device-tree/toradex,product-id)
-    som_pid8=$(tr -d '\0' </proc/device-tree/toradex,board-rev)
-    serial=$(tr -d '\0' </proc/device-tree/serial-number)
+    if [ "$USE_DEVICETREE" ]; then
+        hw_model=$(tr -d '\0' </proc/device-tree/model)
+        serial=$(tr -d '\0' </proc/device-tree/serial-number)
+        if [ -f /proc/device-tree/toradex,product-id ]; then
+            som_pid4=$(tr -d '\0' </proc/device-tree/toradex,product-id)
+            som_pid8=$(tr -d '\0' </proc/device-tree/toradex,board-rev)
+        fi
+    fi
     processor=$(uname -m)
 
     print_header "Hardware info"
-    print_info "SoM model" "$som_model"
-    print_info "SoM version" "$som_pid4 $som_pid8"
-    print_info "SoM serial number" "$serial"
+    print_info "HW model" "$hw_model"
+    print_info "Toradex version" "$som_pid4 $som_pid8"
+    print_info "Serial number" "$serial"
     print_info "Processor arch" "$processor"
     print_footer
 }
