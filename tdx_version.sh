@@ -126,7 +126,9 @@ device_tree_info ()
     fi
 
     dt_compatible=$(tr -d '\0' </proc/device-tree/compatible)
-    dt_used=$(fw_printenv fdtfile | sed -r "s/.*=//g")
+    if [ "$(which fw_printenv)" ]; then
+        dt_used=$(fw_printenv fdtfile | sed -r "s/.*=//g")
+    fi
     if [ -d /boot/ostree ]; then
         stateroot=$(awk -F "ostree=" '{print $2}' /proc/cmdline | awk '{print $1}' | awk -F "/" '{print $5}')
         # shellcheck disable=SC2010
