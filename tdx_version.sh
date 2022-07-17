@@ -183,6 +183,19 @@ distro_detect ()
     fi
 }
 
+bootloader_detect ()
+{
+    if [ -f /boot/grub/grub.cfg ] || [ "$(command -v grub-install)" ]; then
+        export BOOTLOADER="GRUB"
+    # fw_utils - thus fw_printenv - are not present on L4T
+    elif find /boot/ -name "*dtb" | grep -q . || [ "$(command -v fw_printenv)" ]; then
+        export BOOTLOADER="U-Boot"
+    # Don't care about other bootloaders for now, only GRUB and U-Boot
+    else
+        export BOOTLOADER="Unknown"
+    fi
+}
+
 help_info ()
 {
     echo "Usage: tdx_version.sh [OPTION]"
@@ -202,6 +215,7 @@ help_info ()
 
 check_root_user
 distro_detect
+bootloader_detect
 
 case $1 in
     "--help" | "-h")
