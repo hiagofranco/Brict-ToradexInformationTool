@@ -4,8 +4,12 @@
 # Date: may-02-2022
 # Author: hiagofranco & g-claudino
 
+#### Variables ####
+
 HORIZONTAL_LINE_WIDTH=60
 TABULATION_WIDTH=25
+
+#### Functions ####
 
 print_header ()
 {
@@ -186,7 +190,7 @@ help_info ()
     echo ""
 }
 
-# Main
+#### Main ####
 
 if [ "$(id -u)" != "0" ]; then
     echo "Please, run as root."
