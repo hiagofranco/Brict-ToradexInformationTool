@@ -72,14 +72,10 @@ software_summary ()
 
 hardware_info ()
 {
-    if [ "$USE_DEVICETREE" ]; then
-        hw_model=$(tr -d '\0' </proc/device-tree/model)
-        serial=$(tr -d '\0' </proc/device-tree/serial-number)
-        if [ -f /proc/device-tree/toradex,product-id ]; then
-            som_pid4=$(tr -d '\0' </proc/device-tree/toradex,product-id)
-            som_pid8=$(tr -d '\0' </proc/device-tree/toradex,board-rev)
-        fi
-    fi
+    hw_model=$(tr -d '\0' 2> /dev/null </proc/device-tree/model)
+    serial=$(tr -d '\0' 2> /dev/null </proc/device-tree/serial-number)
+    som_pid4=$(tr -d '\0' 2> /dev/null </proc/device-tree/toradex,product-id)
+    som_pid8=$(tr -d '\0' 2> /dev/null </proc/device-tree/toradex,board-rev)
     processor=$(uname -m)
 
     print_header "Hardware info"
@@ -94,16 +90,14 @@ bootloader_info ()
 {
     print_header "Bootloader info"
     if [ "$BOOTLOADER" = "U-Boot" ]; then
-        uboot_version=$(tr -d '\0' </proc/device-tree/chosen/u-boot,version)
-        if [ "$(which fw_printenv)" ]; then
-            uboot_env_vendor=$(fw_printenv vendor | sed -r "s/.*=//g")
-            uboot_env_board=$(fw_printenv board | sed -r "s/.*=//g")
-            uboot_env_fdt_board=$(fw_printenv fdt_board | sed -r "s/.*=//g")
-            uboot_env_soc=$(fw_printenv soc | sed -r "s/.*=//g")
-            uboot_env_vidargs=$(fw_printenv vidargs | sed -r "s/.*=//g")
-            uboot_env_sec_boot=$(fw_printenv sec_boot | sed -r "s/.*=//g")
-            uboot_env_bootdelay=$(fw_printenv bootdelay | sed -r "s/.*=//g")
-        fi
+        uboot_version=$(tr -d '\0' 2> /dev/null </proc/device-tree/chosen/u-boot,version)
+        uboot_env_vendor=$(fw_printenv vendor 2> /dev/null | sed -r "s/.*=//g")
+        uboot_env_board=$(fw_printenv board 2> /dev/null | sed -r "s/.*=//g")
+        uboot_env_fdt_board=$(fw_printenv fdt_board 2> /dev/null | sed -r "s/.*=//g")
+        uboot_env_soc=$(fw_printenv soc 2> /dev/null | sed -r "s/.*=//g")
+        uboot_env_vidargs=$(fw_printenv vidargs 2> /dev/null | sed -r "s/.*=//g")
+        uboot_env_sec_boot=$(fw_printenv sec_boot 2> /dev/null | sed -r "s/.*=//g")
+        uboot_env_bootdelay=$(fw_printenv bootdelay 2> /dev/null | sed -r "s/.*=//g")
 
         print_info "U-Boot version" "$uboot_version"
         print_info "U-Boot vendor" "$uboot_env_vendor"
@@ -129,31 +123,19 @@ device_tree_info ()
         return
     fi
 
-    dt_compatible=$(tr -d '\0' </proc/device-tree/compatible)
-    if [ "$(which fw_printenv)" ]; then
-        dt_used=$(fw_printenv fdtfile | sed -r "s/.*=//g")
-    fi
+    dt_compatible=$(tr -d '\0' 2> /dev/null </proc/device-tree/compatible)
+    dt_used=$(fw_printenv fdtfile 2> /dev/null | sed -r "s/.*=//g")
     if [ -d /boot/ostree ]; then
         stateroot=$(awk -F "ostree=" '{print $2}' /proc/cmdline | awk '{print $1}' | awk -F "/" '{print $5}')
         # shellcheck disable=SC2010
-        dt_available=$(ls /boot/ostree/torizon-"$stateroot"/dtb/ | grep dtb)
-        if [ -f /boot/ostree/torizon-"$stateroot"/dtb/overlays.txt ]; then
-            dto_enabled=$(cat /boot/ostree/torizon-"$stateroot"/dtb/overlays.txt)
-            dto_available=$(ls /boot/ostree/torizon-"$stateroot"/dtb/overlays)
-        else
-            dto_enabled=""
-            dto_available=""
-        fi
+        dt_available=$(ls /boot/ostree/torizon-"$stateroot"/dtb/ 2> /dev/null | grep dtb)
+        dto_enabled=$(cat /boot/ostree/torizon-"$stateroot"/dtb/overlays.txt 2> /dev/null)
+        dto_available=$(ls /boot/ostree/torizon-"$stateroot"/dtb/overlays 2> /dev/null)
     else
         # shellcheck disable=SC2010
-        dt_available=$(ls /boot/ | grep dtb)
-        if [ -f /boot/overlays.txt ]; then
-            dto_enabled=$(cat /boot/overlays.txt)
-            dto_available=$(ls /boot/overlays)
-        else
-            dto_enabled=""
-            dto_available=""
-        fi
+        dt_available=$(ls /boot/ 2> /dev/null | grep dtb)
+        dto_enabled=$(cat /boot/overlays.txt 2> /dev/null)
+        dto_available=$(ls /boot/overlays 2> /dev/null)
     fi
 
     print_header "Device tree"
