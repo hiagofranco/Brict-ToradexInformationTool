@@ -216,7 +216,8 @@ devicetree_detect ()
     # fw_utils are not present on L4T
     # fw_utils presennce does not guarantee U-Boot is used
     # GRUB seem to have some sort of support for device tree
-    if find /boot/ -name "*dtb" | grep -q . ; then
+    if  find /boot/ -name "*dtb" 2> /dev/null | grep -q . || \
+        find /var/rootdirs/mnt/boot/ -name "*dtb" 2> /dev/null | grep -q .; then
         export USE_DEVICETREE=1
     else
         export USE_DEVICETREE=""
