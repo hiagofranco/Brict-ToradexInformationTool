@@ -47,7 +47,7 @@ print_footer ()
     printf "\n"
 }
 
-software_info ()
+software_summary ()
 {
     uboot_version=$(tr -d '\0' </proc/device-tree/chosen/u-boot,version)
     uboot_env_vendor=$(fw_printenv vendor | sed -r "s/.*=//g")
@@ -65,7 +65,7 @@ software_info ()
     fi
     hostname=$(cat /etc/hostname)
 
-    print_header "Software info"
+    print_header "Software summary"
     print_info "U-Boot-version" "$uboot_version"
     print_info "U-Boot vendor" "$uboot_env_vendor"
     print_info "U-Boot video args" "$uboot_env_vidargs"
@@ -222,7 +222,7 @@ case $1 in
         help_info 
         ;;
     "--software" | "-s")
-        software_info
+        software_summary
         ;;
     "--hardware" | "-w")
         hardware_info
@@ -234,7 +234,7 @@ case $1 in
         devices_info
         ;;
     "--no-devices" | "-nd")
-        software_info
+        software_summary
         hardware_info
         ;;
     "--dmesg" | "-dm")
@@ -244,7 +244,7 @@ case $1 in
         modules_info
         ;;
     "-a" | "--all" | *)
-        software_info
+        software_summary
         hardware_info
         device_tree_info
         devices_info
