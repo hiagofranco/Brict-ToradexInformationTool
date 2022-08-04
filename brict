@@ -270,12 +270,16 @@ case $1 in
     "--modules" | "-m")
         modules_info
         ;;
-    "-a" | "--all" | *)
+    "-a" | "--all")
         software_summary
         hardware_info
         bootloader_info
         device_tree_info
         devices_info
         modules_info
+        ;;
+    *)
+        software_summary
+        hardware_info
         ;;
 esac
