@@ -210,7 +210,7 @@ bootloader_detect ()
 {
     if [ -f /boot/grub/grub.cfg ] || [ "$(command -v grub-install)" ]; then
         export BOOTLOADER="GRUB"
-    elif [ "$USE_DEVICETREE" ]; then
+    elif [ "$USE_DEVICETREE" ] || find /dev/ -iname "*ubi*" 2> /dev/null | grep -q .; then
         export BOOTLOADER="U-Boot"
     # Don't care about other bootloaders for now, only GRUB and U-Boot
     else
