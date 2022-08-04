@@ -220,7 +220,7 @@ bootloader_detect ()
 
 help_info ()
 {
-    echo "Usage: tdx_version.sh [OPTION]"
+    echo "Usage: tdx-info [OPTION]"
     echo "List information about hardware and software from Toradex modules."
     echo ""
     echo "--bootloader, -b   : Display bootloader related information (U-Boot and GRUB only)."
