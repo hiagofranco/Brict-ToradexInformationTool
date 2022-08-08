@@ -1,14 +1,20 @@
-# Brict 
-Script to get useful information about Toradex Hardware. The goal of this script is to run it once and get as much information about hardware and software as it can.
+# tdx-info #
 
+## Objective ##
+Script to get useful information about Toradex Hardware.
+The goal of this script is to run it once and get useful information about hardware and software.
 
-* Usage: brict [options]
+## Usage ##
 
-- Nothing, “-a“ or “--all“: it’ll print everything.
-- “-s” or “--software“ for software information only.
-- “-w“ or “--hardware“ for hardware information only.
-- “-d“ or “--devices“for device lists only.
-- “-dm” or “--dmesg” to generate a dmesg log in a text file.
-- “-nd“ or “--no-devices“ for everything except the device list.
-- “-h“ or “--help“ for help.
-- “-o“ or “--overlays“ for overlay related information (still only working with Torizon).
+Usage: ./tdx-info [OPTION]
+
+* If no parameter was passed, this script will display hardware and software information by default.
+* --bootloader, -b   : Display bootloader related information (U-Boot and GRUB only).
+* --devices, -d      : List all devices in /dev/.
+* --device-tree, -dt : Display device tree and overlays related information.
+* --dmesg, -dm       : Export the dmesg output in a txt file at ~.
+* --hardware, -w     : Display only hardware information.
+* --help, -h         : Display this message.
+* --no-devices, -nd  : Diplay hardware and software information without listing devices.
+* --software, -s     : Display only software information.
+* --all, -a          : Display all information showed above without the dmesg log.
