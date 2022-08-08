@@ -2,7 +2,7 @@
 
 ## Script to get useful info about Toradex hardware.
 # Date: may-02-2022
-# Author: hiagofranco, g-claudino and leograba.
+# Authors: hiagofranco, g-claudino and leograba.
 
 #### Variables ####
 
@@ -221,7 +221,7 @@ bootloader_detect ()
 
 help_info ()
 {
-    echo "Usage: tdx_version.sh [OPTION]"
+    echo "Usage: tdx-info [OPTION]"
     echo "List information about hardware and software from Toradex modules."
     echo ""
     echo "If no parameter was passed, this script will display hardware and software information by default."
