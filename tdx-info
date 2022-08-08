@@ -199,7 +199,8 @@ devicetree_detect ()
     # fw_utils presennce does not guarantee U-Boot is used
     # GRUB seem to have some sort of support for device tree
     if  find /boot/ -name "*dtb" 2> /dev/null | grep -q . || \
-        find /var/rootdirs/mnt/boot/ -name "*dtb" 2> /dev/null | grep -q .; then
+        find /var/rootdirs/mnt/boot/ -name "*dtb" 2> /dev/null | grep -q . || \
+        find /dev/ -iname "*ubi*" 2> /dev/null | grep -q .; then
         export USE_DEVICETREE=1
     else
         export USE_DEVICETREE=""
@@ -223,6 +224,7 @@ help_info ()
     echo "Usage: tdx-info [OPTION]"
     echo "List information about hardware and software from Toradex modules."
     echo ""
+    echo "If no parameter was passed, this script will display hardware and software information by default."
     echo "--bootloader, -b   : Display bootloader related information (U-Boot and GRUB only)."
     echo "--devices, -d      : List all devices in /dev/."
     echo "--device-tree, -dt : Display device tree and overlays related information."
@@ -231,6 +233,7 @@ help_info ()
     echo "--help, -h         : Display this message."
     echo "--no-devices, -nd  : Diplay hardware and software information without listing devices."
     echo "--software, -s     : Display only software information."
+    echo "--all, -a          : Display all information showed above without the dmesg log."
     echo ""
 }
 
@@ -241,41 +244,51 @@ distro_detect
 devicetree_detect
 bootloader_detect
 
-case $1 in
-    "--help" | "-h")
-        help_info 
-        ;;
-    "--software" | "-s")
-        software_summary
-        ;;
-    "--hardware" | "-w")
-        hardware_info
-        ;;
-    "--bootloader" | "-b")
-        bootloader_info
-        ;;
-    "--device-tree" | "-dt")
-        device_tree_info
-        ;;
-    "--devices" | "-d")
-        devices_info
-        ;;
-    "--no-devices" | "-nd")
-        software_summary
-        hardware_info
-        ;;
-    "--dmesg" | "-dm")
-        dmesg_log
-          ;;
-    "--modules" | "-m")
-        modules_info
-        ;;
-    "-a" | "--all" | *)
-        software_summary
-        hardware_info
-        bootloader_info
-        device_tree_info
-        devices_info
-        modules_info
-        ;;
-esac
+if [ $# -ne 0 ]; then
+
+    case $1 in
+        
+        "--help" | "-h")
+            help_info 
+            ;;
+        "--software" | "-s")
+            software_summary
+            ;;
+        "--hardware" | "-w")
+            hardware_info
+            ;;
+        "--bootloader" | "-b")
+            bootloader_info
+            ;;
+        "--device-tree" | "-dt")
+            device_tree_info
+            ;;
+        "--devices" | "-d")
+            devices_info
+            ;;
+        "--no-devices" | "-nd")
+            software_summary
+            hardware_info
+            ;;
+        "--dmesg" | "-dm")
+            dmesg_log
+            ;;
+        "--modules" | "-m")
+            modules_info
+            ;;
+        "--all" | "-a")
+            software_summary
+            hardware_info
+            bootloader_info
+            device_tree_info
+            devices_info
+            modules_info
+            ;;
+        *)
+            echo "Unknown command. Please run --help for more info."
+            ;;
+    esac
+else
+    software_summary
+    hardware_info
+fi
