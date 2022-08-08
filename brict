@@ -223,6 +223,7 @@ help_info ()
     echo "Usage: tdx_version.sh [OPTION]"
     echo "List information about hardware and software from Toradex modules."
     echo ""
+    echo "If no parameter was passed, this script will display hardware and software information by default."
     echo "--bootloader, -b   : Display bootloader related information (U-Boot and GRUB only)."
     echo "--devices, -d      : List all devices in /dev/."
     echo "--device-tree, -dt : Display device tree and overlays related information."
