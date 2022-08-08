@@ -15,6 +15,6 @@ Usage: ./tdx-info [OPTION]
 * --dmesg, -dm       : Export the dmesg output in a txt file at ~.
 * --hardware, -w     : Display only hardware information.
 * --help, -h         : Display this message.
-* --no-devices, -nd  : Diplay hardware and software information without listing devices.
+* --no-devices, -nd  : Display hardware and software information without listing devices.
 * --software, -s     : Display only software information.
-* --all, -a          : Display all information showed above without the dmesg log.
+* --all, -a          : Display all information shown above without the dmesg log.
