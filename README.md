@@ -1,5 +1,11 @@
 # tdx-info #
 
+# DEPRECATED, MOVE TO TORADEX REPO #
+
+This repo is deprecated now. It moved to Toradex official repo: https://github.com/toradex/tdx-info
+
+All instructions below are old and this repo should not be used anymore.
+
 ## Objective ##
 Script to get useful information about Toradex Hardware.
 The goal of this script is to run it once and get useful information about hardware and software.
